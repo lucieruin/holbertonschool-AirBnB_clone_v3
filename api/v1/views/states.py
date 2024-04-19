@@ -85,7 +85,10 @@ def put_state(state_id):
     if state is None:
         abort(404)
 
-    data = request.get_json()
+    try:
+        data = request.get_json()
+    except Exception as e:
+        abort(400, description="Not a JSON: {}".format(str(e)))
 
     if data is None:
         abort(400, description="Not a JSON")
