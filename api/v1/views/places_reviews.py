@@ -14,11 +14,12 @@ from models.user import User
 def get_reviews(place_id):
     """Retrieves the list of all Review objects of a Place"""
     place = storage.get(Place, place_id)
-    if not place:
+    if place is None:
         abort(404)
     reviews = storage.all(Review).values()
-    reviews_list = [review.to_dict() 
-                    for review in reviews if review.place_id == place_id]
+    reviews_list = [
+        review.to_dict() for review in reviews if review.place_id == place_id
+    ]
     return jsonify(reviews_list)
 
 
