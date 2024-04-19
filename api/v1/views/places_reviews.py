@@ -66,7 +66,10 @@ def post_review(place_id):
     if place is None:
         abort(404)
 
-    data = request.get_json()
+    try:
+        data = request.get_json()
+    except Exception as e:
+        abort(400, description="Not a JSON: {}".format(str(e)))
 
     if data is None:
         abort(400, description="Not a JSON")
@@ -97,10 +100,16 @@ def put_review(review_id):
     if review is None:
         abort(404)
 
-    data = request.get_json()
+    try:
+        data = request.get_json()
+    except Exception as e:
+        abort(400, description="Not a JSON: {}".format(str(e)))
 
     if data is None:
         abort(400, description="Not a JSON")
+
+    if "id" in data and data["id"] != review_id:
+        abort(404, description="error: Not found")
 
     for key, value in data.items():
         if key not in ["id",
