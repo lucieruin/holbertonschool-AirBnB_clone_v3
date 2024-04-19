@@ -91,7 +91,7 @@ def put_state(state_id):
         abort(400, description="Not a JSON")
 
     if "id" in data and data["id"] != state_id:
-        abort(400, description="not match id in JSON data")
+        abort(404)
 
     for key, value in data.items():
         if key not in ["id", "created_at", "updated_at"]:
