@@ -67,7 +67,10 @@ def post_place(city_id):
     if city is None:
         abort(404)
 
-    data = request.get_json()
+    try:
+        data = request.get_json()
+    except Exception as e:
+        abort(400, description="Not a JSON: {}".format(str(e)))
 
     if data is None:
         abort(400, description="Not a JSON")
@@ -99,10 +102,16 @@ def put_places(place_id):
     if place is None:
         abort(404)
 
-    data = request.get_json()
+    try:
+        data = request.get_json()
+    except Exception as e:
+        abort(400, description="Not a JSON: {}".format(str(e)))
 
     if data is None:
         abort(400, description="Not a JSON")
+
+    if "id" in data and data["id"] != place_id:
+        abort(404, description="error: Not found")
 
     for key, value in data.items():
         if key not in ["id", "user_id", "created_at", "updated_at"]:
