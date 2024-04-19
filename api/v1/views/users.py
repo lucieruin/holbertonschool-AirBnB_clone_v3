@@ -45,13 +45,20 @@ def delete_user(user_id):
 @app_views.route("/users", methods=["POST"], strict_slashes=False)
 def create_user():
     """Creates a User"""
-    req_json = request.get_json()
-    if req_json is None:
+    try:
+        data = request.get_json()
+    except Exception as e:
+        abort(400, description="Not a JSON: {}".format(str(e)))
+
+    if data is None:
         abort(400, description="Not a JSON")
+
     if "email" not in request.get_json():
         abort(400, description="Missing email")
+
     if "password" not in request.get_json():
         abort(400, description="Missing password")
+
     new_user = User(**request.json)
     new_user.save()
     return jsonify(new_user.to_dict()), 201
@@ -65,9 +72,18 @@ def update_user(user_id):
     user = storage.get(User, user_id)
     if user is None:
         abort(404)
-    req_json = request.get_json()
-    if req_json is None:
+
+    try:
+        data = request.get_json()
+    except Exception as e:
+        abort(400, description="Not a JSON: {}".format(str(e)))
+
+    if data is None:
         abort(400, description="Not a JSON")
+
+    if "id" in data and data["id"] != user_id:
+        abort(404, description="error: Not found")
+
     ignore_key = ["id", "email", "created_at", "updated_at"]
     for key, value in request.json.items():
         if key not in ignore_key:
